@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: coba-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mabusaa/argocd-example-apps.git
+    targetRevision: master
+    path: helm-guestbook
+    helm:
+      releaseName: coba-release
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: coba-helm
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kustomize-guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mabusaa/argocd-example-apps.git
+    targetRevision: master
+    path: kustomize-guestbook
+    kustomize:
+      namePrefix: staging-
+      commonLabels:
+        app: demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guestbook
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
