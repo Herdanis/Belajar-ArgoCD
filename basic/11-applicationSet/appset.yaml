@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: local-dev
+            url: https://kubernetes.default.svc
+  template:
+    metadata:
+      name: "{{cluster}}-guestbook"
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Herdanis/argocd-sample-apps
+        targetRevision: main
+        path: backend/simple-service-01
+      destination:
+        server: "{{url}}"
+        namespace: guestbook
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

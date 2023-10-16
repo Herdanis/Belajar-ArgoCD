@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: multi-apps
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/Herdanis/argocd-sample-apps
+        revision: main
+        directories:
+          - path: backend/*
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Herdanis/argocd-sample-apps
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{path.basename}}"
+      syncPolicy:
+        automated:
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
